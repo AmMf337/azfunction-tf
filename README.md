@@ -145,17 +145,17 @@ Para eliminar la infraestructura creada, se puede utilizar:
 terraform destroy --var-file="dev.tfvars" -auto-approve
 ```
 
-# Solución
+# Solution
 
-### Archivos
-Para poder crear nuestros recursos en la nube de azure lo primero que fue necesario fue agregar la variable **susbcription_id** en el archivo **main.tf**:
+### Files
+To create our resources in the Azure cloud, the first step was to add the **subscription_id** variable in the **main.tf** file:
 ```
 provider "azurerm" {
   features {}
-  suscription_id = "ID"
+  subscription_id = "ID"
 }
 ```
-Para este ejercicio hubo problemas con la región "West Europe" que estaba por defecto en en el archivo **variable.tf**, por lo que se cambío a **centralus**:
+For this exercise, there were issues with the default region "West Europe" defined in the variables.tf file, so it was changed to centralus:
 ```
 variable "location" {
   type        = string
@@ -163,31 +163,41 @@ variable "location" {
   description = "Location"
 }
 ```
-### Comandos
-Antes de crear los recursos en azure es necesario iniciar sesión con la cuenta que vamos a usar:
+### Commands
+
+Before creating the resources in Azure, it is necessary to log in with the account you are going to use:
 ```
 az login
 ```
-Antes de comenzar con la creación de recursos es necesario generar una vm que realizara el proceso localmente antes de subirlo:
+Before starting the resource creation process, it is necessary to initialize Terraform locally:
 ```
 terraform init
 ```
-Este comando pedira las credenciales(correo y contraseña) para ingresar a la cuenta.
-Ahora se debe crear el plan con la información de los recursos que se crearan en la nube:
+This command will request your account credentials (email and password).
+
+Next, create the plan with the information of the resources that will be deployed in the cloud:
 ```
 terraform plan
 ```
-Finalmente se ejecuta el plan creado anteriormente:
+
+Finally, execute the previously created plan:
+
 ```
 terraform apply
 ```
-### Problemas 
-A parte del problema mencionado anteriormente con la región, otro problema que se presento al realizar el ejercicio sucedio al momento de crear los recursos,pues solo dos se crearón y el resto fallaban por que al parecer los primeros recursos fallaban al crearse. Al intentar ejecutar el plan de terraform nuevamente se presentaba un error dado que ciertos recursos ya habian sido creados por lo que era necesario importar datos de dichos recursos para actulizar el **terraform.tfstate**:
+
+Both terraform plan and terraform apply will ask for a name for the function. Additionally, terraform apply will request confirmation before starting execution.
+
+### Issues
+
+Apart from the previously mentioned region problem, another issue occurred during the resource creation process: only two resources were created successfully, while the rest failed because the initial ones did not deploy correctly.
+
+When attempting to run the Terraform plan again, an error appeared since some resources already existed. It was therefore necessary to import these existing resources into the terraform.tfstate file using:
+
 ```
-terraform import azurerm_resource_group.rg "/subscriptions/ID/resourceGroups/nombre_funcion"
+terraform import azurerm_resource_group.rg "/subscriptions/ID/resourceGroups/function_name"
 ```
-### Resultado
 <img width="1892" height="1511" alt="image" src="https://github.com/user-attachments/assets/36402d91-f76c-4053-9f8d-c8eb3bfe2a60" />
 
-<img width="3211" height="2037" alt="image" src="https://github.com/user-attachments/assets/922546fa-b3f7-4b83-85e0-f317b4e25bb7" />
+<img width="3060" height="689" alt="image" src="https://github.com/user-attachments/assets/754778b1-9e53-475a-b3ab-d94a5c5d7670" />
 
