@@ -144,3 +144,50 @@ Para eliminar la infraestructura creada, se puede utilizar:
 ```bash
 terraform destroy --var-file="dev.tfvars" -auto-approve
 ```
+
+# Solución
+
+### Archivos
+Para poder crear nuestros recursos en la nube de azure lo primero que fue necesario fue agregar la variable **susbcription_id** en el archivo **main.tf**:
+```
+provider "azurerm" {
+  features {}
+  suscription_id = "ID"
+}
+```
+Para este ejercicio hubo problemas con la región "West Europe" que estaba por defecto en en el archivo **variable.tf**, por lo que se cambío a **centralus**:
+```
+variable "location" {
+  type        = string
+  default     = "centralus"
+  description = "Location"
+}
+```
+### Comandos
+Antes de crear los recursos en azure es necesario iniciar sesión con la cuenta que vamos a usar:
+```
+az login
+```
+Antes de comenzar con la creación de recursos es necesario generar una vm que realizara el proceso localmente antes de subirlo:
+```
+terraform init
+```
+Este comando pedira las credenciales(correo y contraseña) para ingresar a la cuenta.
+Ahora se debe crear el plan con la información de los recursos que se crearan en la nube:
+```
+terraform plan
+```
+Finalmente se ejecuta el plan creado anteriormente:
+```
+terraform apply
+```
+### Problemas 
+A parte del problema mencionado anteriormente con la región, otro problema que se presento al realizar el ejercicio sucedio al momento de crear los recursos,pues solo dos se crearón y el resto fallaban por que al parecer los primeros recursos fallaban al crearse. Al intentar ejecutar el plan de terraform nuevamente se presentaba un error dado que ciertos recursos ya habian sido creados por lo que era necesario importar datos de dichos recursos para actulizar el **terraform.tfstate**:
+```
+terraform import azurerm_resource_group.rg "/subscriptions/ID/resourceGroups/nombre_funcion"
+```
+### Resultado
+<img width="1892" height="1511" alt="image" src="https://github.com/user-attachments/assets/36402d91-f76c-4053-9f8d-c8eb3bfe2a60" />
+
+<img width="3211" height="2037" alt="image" src="https://github.com/user-attachments/assets/922546fa-b3f7-4b83-85e0-f317b4e25bb7" />
+
